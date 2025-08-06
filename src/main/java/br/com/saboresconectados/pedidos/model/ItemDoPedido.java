@@ -7,7 +7,9 @@ import lombok.Setter;
 
 
 
-import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +29,7 @@ public class ItemDoPedido {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Nonnull
+    @NotNull
     private Integer quantidade;
 
     private String descricao;

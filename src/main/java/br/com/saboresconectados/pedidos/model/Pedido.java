@@ -3,9 +3,12 @@ package br.com.saboresconectados.pedidos.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import lombok.Setter;
-import jakarta.annotation.Nonnull;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,10 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pedidos")
@@ -31,10 +31,10 @@ public class Pedido {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @Nonnull
+    @NotNull
     private LocalDateTime dataHora;
 
-    @Nonnull @Enumerated(EnumType.STRING)
+    @NotNull @Enumerated(EnumType.STRING)
     private Status status;
 
     @OneToMany(cascade=CascadeType.PERSIST, mappedBy="pedido")
