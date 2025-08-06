@@ -1,6 +1,10 @@
 package br.com.saboresconectados.pedidos.service;
 
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -9,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.saboresconectados.pedidos.dto.PedidosDto;
+import br.com.saboresconectados.pedidos.dto.StatusDto;
 import br.com.saboresconectados.pedidos.model.Pedido;
 import br.com.saboresconectados.pedidos.model.Status;
 import br.com.saboresconectados.pedidos.repository.PedidosRepository;
@@ -23,35 +28,52 @@ public class PedidoService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public Page<PedidosDto> obterTodos(Pageable paginacao){
-        return repository
-        .findAll(paginacao)
-        .map(p -> modelMapper.map(p, PedidosDto.class));
+    public List<PedidosDto> obterTodos() {
+        return repository.findAll().stream()
+                .map(p -> modelMapper.map(p, PedidosDto.class))
+                .collect(Collectors.toList());
     }
 
-    public PedidosDto obterPorId(Long id){
-        Pedido pedidos = repository
-                        .findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException());
-        return modelMapper.map(pedidos, PedidosDto.class);
+    public PedidosDto obterPorId(Long id) {
+        Pedido pedido = repository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        return modelMapper.map(pedido, PedidosDto.class);
     }
 
-    public PedidosDto criarPedido(PedidosDto dto){
-        Pedido pedidos = modelMapper.map(dto, Pedido.class);
-        pedidos.setStatus(Status.EM_ANDAMENTO);
-        repository.save(pedidos);
-        return modelMapper.map(pedidos, PedidosDto.class);
+    public PedidosDto criarPedido(PedidosDto dto) {
+        Pedido pedido = modelMapper.map(dto, Pedido.class);
 
+        pedido.setDataHora(LocalDateTime.now());
+        pedido.setStatus(Status.REALIZADO);
+        pedido.getItens().forEach(item -> item.setPedido(pedido));
+        Pedido salvo = repository.save(pedido);
+
+        return modelMapper.map(pedido, PedidosDto.class);
     }
 
-    public PedidosDto atualizarPedido(Long id, PedidosDto dto){
-        Pedido pedidos = modelMapper.map(dto, Pedido.class);
-        pedidos.setId(id);
-        pedidos = repository.save(pedidos);
-        return modelMapper.map(pedidos, PedidosDto.class);
+    public PedidosDto atualizaStatus(Long id, StatusDto dto) {
+
+        Pedido pedido = repository.porIdComItens(id);
+
+        if (pedido == null) {
+            throw new EntityNotFoundException();
+        }
+
+        pedido.setStatus(dto.getStatus());
+        repository.atualizaStatus(dto.getStatus(), pedido);
+        return modelMapper.map(pedido, PedidosDto.class);
     }
 
-    public void excluirPedido(Long id){
-        repository.deleteById(id);
+    public void aprovaPagamentoPedido(Long id) {
+
+        Pedido pedido = repository.porIdComItens(id);
+
+        if (pedido == null) {
+            throw new EntityNotFoundException();
+        }
+
+        pedido.setStatus(Status.PAGO);
+        repository.atualizaStatus(Status.PAGO, pedido);
     }
 }

@@ -36,7 +36,7 @@ public class Pedido {
 
     @NotNull @Enumerated(EnumType.STRING)
     private Status status;
-
-    @OneToMany(cascade=CascadeType.PERSIST, mappedBy="pedido")
+    
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<ItemDoPedido> itens = new ArrayList<>();
 }
