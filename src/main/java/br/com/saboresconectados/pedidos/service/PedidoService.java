@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.saboresconectados.pedidos.dto.PedidosDto;
@@ -45,9 +43,9 @@ public class PedidoService {
         Pedido pedido = modelMapper.map(dto, Pedido.class);
 
         pedido.setDataHora(LocalDateTime.now());
-        pedido.setStatus(Status.REALIZADO);
+        pedido.setStatus(Status.EM_ANDAMENTO);
         pedido.getItens().forEach(item -> item.setPedido(pedido));
-        Pedido salvo = repository.save(pedido);
+        repository.save(pedido);
 
         return modelMapper.map(pedido, PedidosDto.class);
     }

@@ -22,5 +22,5 @@ public class PedidosDto {
     private Long Id;
     private LocalDateTime dataPedido;
     private Status status;
-    private List<ItemDoPedido> itens = new ArrayList<>();
+    private List<ItemDoPedido> itens;
 }

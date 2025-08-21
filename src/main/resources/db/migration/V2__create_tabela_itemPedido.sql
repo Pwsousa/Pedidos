@@ -1,9 +1,8 @@
-CREATE TABLE item_pedido (
-    id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    quantidade BIGINT(20) NOT NULL,
-    descricao VARCHAR(255) NOT NULL,
-    pedido_id BIGINT(20) NOT NULL,
-
-    PRIMARY KEY (id),
-    FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
-) 
+CREATE TABLE item_do_pedido (
+  id bigint(20) NOT NULL AUTO_INCREMENT,
+  descricao varchar(255) DEFAULT NULL,
+  quantidade int(11) NOT NULL,
+  pedido_id bigint(20) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+)
