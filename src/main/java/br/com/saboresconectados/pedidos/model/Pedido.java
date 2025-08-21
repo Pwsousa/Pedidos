@@ -9,10 +9,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +39,8 @@ public class Pedido {
 
     @NotNull @Enumerated(EnumType.STRING)
     private Status status;
-
-    @OneToMany(cascade=CascadeType.PERSIST, mappedBy="pedido")
-    private List<ItemDoPedido> itens = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ItemDoPedido> itens;
 }

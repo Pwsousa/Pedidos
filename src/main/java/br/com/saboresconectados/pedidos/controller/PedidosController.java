@@ -1,6 +1,7 @@
 package br.com.saboresconectados.pedidos.controller;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.saboresconectados.pedidos.dto.PedidosDto;
+import br.com.saboresconectados.pedidos.dto.StatusDto;
 import br.com.saboresconectados.pedidos.service.PedidoService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -33,8 +35,8 @@ public class PedidosController {
     private PedidoService service;
 
     @GetMapping() 
-    public Page<PedidosDto> listar(@PageableDefault(size = 10) Pageable paginacao){
-        return service.obterTodos(paginacao);
+    public List<PedidosDto> listar(){
+        return service.obterTodos();
     }
 
     @GetMapping("/{id}")
@@ -56,17 +58,20 @@ public class PedidosController {
     }
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PedidosDto> atualizar(@PathVariable @NotNull Long id, 
-                                                  @RequestBody @Valid PedidosDto dto){
+    @PutMapping("/{id}/status")
+    public ResponseEntity<PedidosDto> atualizaStatus(@PathVariable Long id, @RequestBody StatusDto status){
+        PedidosDto dto = service.atualizaStatus(id, status);
 
-        PedidosDto atualizado = service.atualizarPedido(id, dto);
-        return ResponseEntity.ok(atualizado);
+        return ResponseEntity.ok(dto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<PedidosDto> remover(@PathVariable @NotNull Long id){
-        service.excluirPedido(id);
-        return ResponseEntity.noContent().build();
+
+    @PutMapping("/{id}/pago")
+    public ResponseEntity<Void> aprovaPagamento(@PathVariable @NotNull Long id) {
+        service.aprovaPagamentoPedido(id);
+
+        return ResponseEntity.ok().build();
+
     }
+
 }
