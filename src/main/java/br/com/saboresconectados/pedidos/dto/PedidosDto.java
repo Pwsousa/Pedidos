@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.io.ObjectInputFilter.Status;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import br.com.saboresconectados.pedidos.model.ItemDoPedido;
